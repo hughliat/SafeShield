@@ -1,0 +1,37 @@
+安全盾 SafeShield 0.9.0 · 安装说明
+====================================
+
+一、安装
+1. 把左侧「SafeShield.app」拖到右侧「Applications」文件夹即可。
+2. 首次打开:本版本未做 Apple 签名与公证(M4 范围,需开发者账号),
+   macOS 可能提示"无法打开/已损坏"。请任选其一:
+   - 在访达中 右键 SafeShield.app → 打开 → 再点"打开";或
+   - 终端执行:xattr -dr com.apple.quarantine /Applications/SafeShield.app
+
+二、首次启动
+- 首次启动会显示 3 页引导(检测范围、默认只读、隐私承诺),确认后进入主界面。
+- 所有数据仅存本机:~/Library/Application Support/SafeShield/
+  (settings.json 设置、baseline.json 守护基线、events.jsonl 告警、
+   audit.jsonl 处置审计、reports.json 历史报告、quarantine/ 隔离区)
+- 不读取、不上传任何文件内容与口令;云端查杀(未启用)仅传哈希。
+
+三、功能与合规口径
+- 体检:6 组快照检测器、21 项检查,评分口径 S = 100 × (1 − Σ(w·p)/Σw),规则集 v1。
+- 守护:六类基线差分检测(进程/端口/连接/启动项/受控目录/账户),首轮静默建基线。
+- 处置:默认「确认后处置」;只读姿态不执行任何处置;终止进程等不可逆动作需二次确认;
+  封禁 IP 需 root 特权助手(未随本版本提供),仅记录建议不执行;隔离可一键回滚;审计全量留痕。
+- 白名单:随包仅通用规则;企业合规安全软件等本机专属条目请在 设置→白名单 自行添加,仅存本机。
+
+四、卸载
+- 删除 /Applications/SafeShield.app;
+- 如需清除数据:rm -rf ~/Library/Application Support/SafeShield
+
+五、自动化验证(可选)
+终端直接运行二进制并附加参数:
+  /Applications/SafeShield.app/Contents/MacOS/SafeShield --selftest   # 合规自检 7 项,结果写 selftest.json
+  /Applications/SafeShield.app/Contents/MacOS/SafeShield --headless   # 无界面跑一次体检并打印评分
+界面演示参数:--skip-onboarding --page dashboard|scan|guardian|reports|settings
+              --guardian --scan --interval 15 --show-confirm
+
+构建信息:swiftc 直编(CommandLineTools,无 Xcode 依赖),Sources 17 个 Swift 文件;
+设计偏差详见仓库 03-安全盾SafeShield-开发设计.md §17。
